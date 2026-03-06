@@ -1,0 +1,72 @@
+{
+  "id": "swissrh",
+  "name": "SWISSRH",
+  "entity": "independant",
+  "domain": "swissrh.ch",
+  "repo": "O-N-2950/swissrh",
+  "description": "SaaS RH & Payroll suisse pour PME. Fiches de salaire, déclarations AVS, Swissdec 5.0, gestion des absences.",
+  "version": "1.0",
+  "updated_at": "2026-03-06",
+  "stack": "TypeScript + Railway",
+  "status": "en_développement",
+  "data_exposed": [
+    {
+      "key": "salaire_masse.avs",
+      "description": "Masse salariale AVS annuelle déclarée par une entreprise",
+      "trigger": "clôture de paie mensuelle / annuelle",
+      "format": "api",
+      "payload": {
+        "entreprise_id": "string",
+        "masse_avs_annuelle": "number",
+        "nb_employes": "number",
+        "noga_code": "string"
+      }
+    },
+    {
+      "key": "employe.accident",
+      "description": "Déclaration d'accident d'un employé",
+      "trigger": "saisie absence motif=accident",
+      "format": "webhook"
+    },
+    {
+      "key": "employe.maladie_longue",
+      "description": "Absence maladie > 30 jours",
+      "trigger": "saisie prolongée",
+      "format": "webhook"
+    },
+    {
+      "key": "entreprise.nouveau_employe",
+      "description": "Nouveau contrat de travail créé dans SWISSRH",
+      "trigger": "onboarding employé",
+      "format": "webhook"
+    }
+  ],
+  "data_needed": [
+    {
+      "key": "contrat.laa",
+      "description": "Données contrat LAA actif de l'entreprise pour cohérence",
+      "from": "winwin-v2",
+      "priority": "haute"
+    },
+    {
+      "key": "contrat.pg_maladie",
+      "description": "Indemnités journalières maladie — taux de couverture",
+      "from": "winwin-v2",
+      "priority": "haute"
+    }
+  ],
+  "events_emitted": [
+    "salaire_masse.avs",
+    "employe.accident",
+    "employe.maladie_longue",
+    "entreprise.nouveau_employe"
+  ],
+  "events_consumed": [
+    "contrat.laa.info",
+    "contrat.pg_maladie.info"
+  ],
+  "revenue_model": "SaaS abonnement mensuel par PME",
+  "monthly_users": 0,
+  "monthly_revenue_chf": 0,
+  "synergy_potential": "SYNERGIE MAJEURE avec WIN WIN: la masse salariale AVS est LA donnée clé pour calculer les primes LAA/LAAC/PG maladie. SWISSRH a cette donnée en temps réel. WIN WIN en a besoin pour les appels d'offres. Intégration API directe = flux automatique = gain de temps énorme pour Olivier. Deuxième synergie: accident d'employé dans SWISSRH → déclenchement automatique sinistre LAA dans WIN WIN."
+}
