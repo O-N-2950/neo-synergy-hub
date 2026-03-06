@@ -1,0 +1,35 @@
+{
+  "id": "SYN-001",
+  "status": "proposed",
+  "proposed_by": "claude-synergy-engine",
+  "proposed_at": "2026-03-06T20:00:00Z",
+  "validated_by": null,
+  "validated_at": null,
+  "title": "🔧 Sinistre véhicule WIN WIN → Garagiste Partenaire PEP's",
+  "description": "Quand un sinistre véhicule s'ouvre dans WIN WIN, l'engine vérifie automatiquement si un garagiste partenaire PEP's est disponible dans le canton du client. Si oui → mission déclenchée, client notifié, garagiste contacté.",
+  "category": "automation",
+  "priority": "haute",
+  "effort_estimate": "4h de code",
+  "revenue_impact_chf": 800,
+  "revenue_details": "Chaque mission = fidélisation client WIN WIN (rétention) + prospect garagiste (nouveaux contrats RC pro/bâtiment). Valeur estimée 800 CHF/mission × 10 missions/an = 8 000 CHF/an.",
+  "source_app": "winwin-v2",
+  "source_event": "sinistre.vehicule.ouvert",
+  "target_app": "peps-digital",
+  "target_action": "recommander_commercant_garagiste",
+  "flow": [
+    "1. WIN WIN: sinistre type=vehicule créé pour le client X",
+    "2. NEO Hub reçoit l'event sinistre.vehicule.ouvert",
+    "3. Query PEP's: garagistes partenaires dans canton du client",
+    "4. Si partenaire trouvé: afficher dans fiche sinistre WIN WIN",
+    "5. Olivier (ou automatique): déclencher mission → email garagiste",
+    "6. Client WIN WIN reçoit SMS/email: 'Garage Dupont vous attend'",
+    "7. Garagiste reçoit mission + coordonnées client + type de sinistre",
+    "8. Post-mission: client note le garagiste (1-5 étoiles dans portail WIN WIN)"
+  ],
+  "implementation": {
+    "winwin-v2": "Webhook POST /api/neo-hub/emit {event: 'sinistre.vehicule.ouvert', payload: {...}} au moment de la création sinistre",
+    "peps-digital": "Endpoint GET /api/partenaires/nearby?type=garage&canton=JU retourne les garages disponibles",
+    "neo-hub": "Logique de matching canton + déclenchement mission"
+  },
+  "validation_url": "https://github.com/O-N-2950/neo-synergy-hub/blob/main/synergies/proposed/SYN-001.json"
+}
