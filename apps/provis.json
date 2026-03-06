@@ -1,0 +1,21 @@
+{
+  "id": "provis",
+  "name": "PROVIS",
+  "entity": "independant",
+  "domain": "provis.ch",
+  "repo": "O-N-2950/provis",
+  "description": "⚠️ App en cours de création — manifeste à compléter par Olivier",
+  "version": "0.1",
+  "updated_at": "2026-03-06",
+  "stack": "À définir",
+  "status": "en_création",
+  "data_exposed": [],
+  "data_needed": [],
+  "events_emitted": [],
+  "events_consumed": [],
+  "revenue_model": "À définir",
+  "monthly_users": 0,
+  "monthly_revenue_chf": 0,
+  "synergy_potential": "À compléter une fois le concept PROVIS défini. L'IA proposera automatiquement des synergies dès que ce manifeste sera enrichi.",
+  "_note": "Ce manifeste est un placeholder. Dès que le repo PROVIS sera créé et ce fichier mis à jour, le Synergy Engine Claude se déclenchera automatiquement pour proposer des synergies avec toutes les autres apps."
+}
