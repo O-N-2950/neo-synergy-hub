@@ -1,0 +1,52 @@
+{
+  "id": "soluris",
+  "name": "Soluris",
+  "entity": "independant",
+  "domain": "soluris.ch",
+  "repo": "O-N-2950/soluris",
+  "description": "IA juridique suisse — recherche de jurisprudence, analyse de contrats, aide à la rédaction de documents légaux.",
+  "version": "1.0",
+  "updated_at": "2026-03-06",
+  "stack": "Python + Railway",
+  "status": "production",
+  "data_exposed": [
+    {
+      "key": "contrat.analyse.terminee",
+      "description": "Analyse juridique d'un contrat terminée",
+      "trigger": "rapport généré",
+      "format": "webhook"
+    },
+    {
+      "key": "litige.detecte",
+      "description": "Clause litigieuse ou risque juridique détecté dans un document",
+      "trigger": "score risque > 70",
+      "format": "webhook"
+    }
+  ],
+  "data_needed": [
+    {
+      "key": "sinistre.rc.ouvert",
+      "description": "Sinistre RC ouvert dans WIN WIN → analyser les responsabilités juridiques",
+      "from": "winwin-v2",
+      "priority": "moyenne"
+    },
+    {
+      "key": "divorce.en_cours",
+      "description": "Dossier divorce en cours → analyse juridique des conventions",
+      "from": "provis",
+      "priority": "haute"
+    }
+  ],
+  "events_emitted": [
+    "contrat.analyse.terminee",
+    "litige.detecte"
+  ],
+  "events_consumed": [
+    "sinistre.rc.ouvert",
+    "divorce.en_cours"
+  ],
+  "revenue_model": "Abonnement SaaS + crédits analyse à l'unité",
+  "monthly_users": 0,
+  "monthly_revenue_chf": 0,
+  "synergy_potential": "Soluris + WIN WIN: quand un sinistre RC est en litige, Soluris analyse les responsabilités juridiques automatiquement. Soluris + PROVIS: analyse juridique des conventions de divorce. Soluris + SWISSRH: analyse des contrats de travail pour détecter les risques employeur."
+}
