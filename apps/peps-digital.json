@@ -1,0 +1,72 @@
+{
+  "id": "peps-digital",
+  "name": "PEP's Digital",
+  "entity": "peps_swiss",
+  "domain": "peps.digital",
+  "repo": "O-N-2950/peps-v2-pwa",
+  "description": "Communauté membres ↔ commerçants partenaires. Système de crédits PEP's — gagnés via J'VAIS, immo.cool, WIN WIN — dépensés chez les commerçants.",
+  "version": "2.0",
+  "updated_at": "2026-03-06",
+  "stack": "Flask + React/Vite + PostgreSQL + Railway",
+  "status": "production",
+  "data_exposed": [
+    {
+      "key": "credits.gagnes",
+      "description": "Crédits PEP's gagnés par un membre (source: trajet, bail, contrat)",
+      "trigger": "transaction créditée",
+      "format": "api"
+    },
+    {
+      "key": "commercant.nouveau",
+      "description": "Nouveau commerçant partenaire inscrit sur peps.digital",
+      "trigger": "validation commerçant",
+      "format": "webhook"
+    },
+    {
+      "key": "membre.actif",
+      "description": "Membre PEP's actif avec profil complet",
+      "trigger": "dernière connexion < 30j",
+      "format": "api"
+    }
+  ],
+  "data_needed": [
+    {
+      "key": "contrat.nouveau",
+      "description": "Nouveau contrat WIN WIN → offrir 30 crédits PEP's au client",
+      "from": "winwin-v2",
+      "priority": "haute"
+    },
+    {
+      "key": "trajet.complete",
+      "description": "Trajet J'VAIS → 0.5 crédit/km au conducteur",
+      "from": "jvais",
+      "priority": "haute"
+    },
+    {
+      "key": "bail.signe",
+      "description": "Bail signé immo.cool → 50 crédits au locataire",
+      "from": "immo-cool",
+      "priority": "moyenne"
+    },
+    {
+      "key": "sinistre.vehicule.ouvert",
+      "description": "Sinistre véhicule → recommander garagiste partenaire PEP's",
+      "from": "winwin-v2",
+      "priority": "haute"
+    }
+  ],
+  "events_emitted": [
+    "credits.emis",
+    "offre.utilisee",
+    "commercant.valide"
+  ],
+  "events_consumed": [
+    "contrat.nouveau",
+    "trajet.complete",
+    "bail.signe"
+  ],
+  "revenue_model": "Abonnements commerçants + commissions sur crédits",
+  "monthly_users": 247,
+  "monthly_revenue_chf": 8900,
+  "synergy_potential": "La monnaie PEP's est le liant de tout l'écosystème. Chaque app peut offrir des crédits comme récompense et les clients les dépensent chez les commerçants locaux. Les garagistes partenaires WIN WIN peuvent aussi être commerçants PEP's — double flux."
+}
