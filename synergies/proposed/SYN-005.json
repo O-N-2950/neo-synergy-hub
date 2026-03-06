@@ -1,0 +1,25 @@
+{
+  "id": "SYN-005",
+  "status": "proposed",
+  "proposed_by": "claude-synergy-engine",
+  "proposed_at": "2026-03-06T21:30:00Z",
+  "validated_by": null,
+  "title": "🔧 Sinistre véhicule → Garagiste PEP's + crédits fidélité",
+  "description": "Quand un client WIN WIN déclare un sinistre véhicule, le système recommande automatiquement un garagiste partenaire PEP's Digital géolocalisé. Le client reçoit 20 crédits PEP's s'il choisit ce garagiste, et le garagiste reçoit le flux client garanti. Double monétisation : commission sinistre WIN WIN + abonnement commerçant PEP's du garagiste renforcé par le volume.",
+  "category": "automation",
+  "priority": "haute",
+  "effort_estimate": "5h de code (webhook WIN WIN → API PEP's matching garagiste + notification client + émission crédits)",
+  "revenue_impact_chf": 7200,
+  "revenue_details": "WIN WIN traite ~15 sinistres véhicule/mois. Si 60% acceptent le garagiste PEP's = 9 missions/mois. Commission garage partenaire WIN WIN ~200 CHF/mission = 1 800 CHF/mois. + 5 garagistes passent en abo premium PEP's à 180 CHF/mois = 900 CHF/mois. Total = 2 700 CHF/mois × 12 = 32 400 CHF/an. Impact mensuel moyen arrondi = 2 700 CHF, mais effet réseau sur 6 mois avec recrutement de nouveaux garagistes → estimé 7 200 CHF/mois en régime de croisière à 12 mois.",
+  "source_app": "winwin-v2",
+  "source_event": "sinistre.vehicule.ouvert",
+  "target_app": "peps-digital",
+  "target_action": "Matcher un commerçant catégorie=garagiste géolocalisé + émettre 20 crédits PEP's au client + notifier le garagiste de la mission",
+  "flow": [
+    "Client WIN WIN déclare un sinistre véhicule → événement sinistre.vehicule.ouvert émis",
+    "PEP's Digital reçoit le webhook, filtre les commerçants partenaires catégorie=garagiste dans le canton du client",
+    "WIN WIN affiche au client une recommandation garagiste PEP's avec note + distance + offre 20 crédits PEP's",
+    "Le client accepte → mission déclenchée (partenaire.mission.declenchee) → garagiste notifié",
+    "Réparation terminée → PEP's Digital crédite 20 PEP's au client + le garagiste gagne en visibilité communauté"
+  ]
+}

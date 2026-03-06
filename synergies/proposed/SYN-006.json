@@ -1,0 +1,26 @@
+{
+  "id": "SYN-006",
+  "status": "proposed",
+  "proposed_by": "claude-synergy-engine",
+  "proposed_at": "2026-03-06T21:30:00Z",
+  "validated_by": null,
+  "title": "⚖️ Litige contrat détecté par Soluris → Alerte révision polices WIN WIN",
+  "description": "Quand Soluris analyse un contrat (bail, contrat de travail, convention) et détecte une clause litigieuse ou un risque juridique élevé (score > 70), WIN WIN reçoit une alerte pour vérifier si le client concerné a une couverture protection juridique adéquate. Si non → proposition automatique d'une assurance protection juridique. Soluris devient un détecteur de besoins assurance latents.",
+  "category": "cross-sell",
+  "priority": "moyenne",
+  "effort_estimate": "4h de code (webhook Soluris litige.detecte → lookup client WIN WIN → génération proposition PJ si gap détecté)",
+  "revenue_impact_chf": 3600,
+  "revenue_details": "Soluris en croissance, estimation 40 analyses/mois à maturité. 30% déclenchent un score risque > 70 = 12 alertes/mois. 50% sont des clients/prospects WIN WIN identifiables = 6 opportunités/mois. Taux de conversion protection juridique ~40% = 2.4 contrats/mois. Prime PJ moyenne 450 CHF/an, commission courtier 25% = 112 CHF/contrat/an. Mais surtout : rétention client renforcée + cross-sell moyen de 1.5 contrats supplémentaires par client touché (valeur lifetime). Impact direct : 2.4 × 112 = 269 CHF/mois en commissions PJ. Impact indirect cross-sell : 2.4 × 1.5 contrats × 600 CHF prime moyenne × 25% = 540 CHF/mois. Total ~800 CHF/mois en démarrage → 3 600 CHF/mois en régime croisière avec volume Soluris à 150+ analyses/mois.",
+  "source_app": "soluris",
+  "source_event": "litige.detecte",
+  "target_app": "winwin-v2",
+  "target_action": "Vérifier couverture protection juridique du client concerné → si gap détecté, générer une proposition PJ automatique dans le cockpit courtier",
+  "flow": [
+    "Utilisateur Soluris soumet un contrat pour analyse → Soluris génère un rapport avec score de risque",
+    "Score risque > 70 → événement litige.detecte émis avec email utilisateur + type de litige + résumé",
+    "WIN WIN reçoit le webhook → lookup client par email dans la base WIN WIN",
+    "Si client trouvé : vérification des polices actives → si pas de protection juridique ou couverture insuffisante → flag opportunité",
+    "Cockpit courtier Olivier : alerte 'Client X — risque juridique détecté par Soluris — pas de PJ active' + proposition pré-remplie",
+    "Olivier valide → le client reçoit une proposition protection juridique contextualisée avec le risque détecté"
+  ]
+}
