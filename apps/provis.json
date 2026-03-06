@@ -17,5 +17,6 @@
   "monthly_users": 0,
   "monthly_revenue_chf": 0,
   "synergy_potential": "À compléter une fois le concept PROVIS défini. L'IA proposera automatiquement des synergies dès que ce manifeste sera enrichi.",
-  "_note": "Ce manifeste est un placeholder. Dès que le repo PROVIS sera créé et ce fichier mis à jour, le Synergy Engine Claude se déclenchera automatiquement pour proposer des synergies avec toutes les autres apps."
+  "_note": "Touch pour déclencher le Synergy Engine — complète ce fichier avec le concept PROVIS",
+  "_last_check": "2026-03-06T21:30:00Z"
 }
