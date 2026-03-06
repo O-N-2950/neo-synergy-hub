@@ -1,0 +1,128 @@
+{
+  "id": "winwin-v2",
+  "name": "WIN WIN Finance Group v2",
+  "entity": "ww_finance",
+  "domain": "winwin.swiss",
+  "repo": "O-N-2950/winwin-v2",
+  "description": "Cockpit courtier en assurances + portail client self-service. Gestion des contrats, sinistres, mandats, propositions, messagerie broker-client.",
+  "version": "2.0",
+  "updated_at": "2026-03-06",
+  "stack": "Node.js + tRPC + React + PostgreSQL + Railway",
+  "status": "production",
+  "data_exposed": [
+    {
+      "key": "sinistre.vehicule.ouvert",
+      "description": "Un client WIN WIN déclare un sinistre véhicule",
+      "trigger": "création d'un sinistre de type véhicule",
+      "format": "webhook"
+    },
+    {
+      "key": "sinistre.degat_eau.ouvert",
+      "description": "Sinistre dégât des eaux déclaré",
+      "trigger": "type=dégât_eau",
+      "format": "webhook"
+    },
+    {
+      "key": "client.divorce.detecte",
+      "description": "Changement de situation familiale détecté (divorce, séparation)",
+      "trigger": "mise à jour situation familiale client",
+      "format": "webhook"
+    },
+    {
+      "key": "client.demenagement.detecte",
+      "description": "Changement d'adresse enregistré pour un client",
+      "trigger": "update adresse client",
+      "format": "webhook"
+    },
+    {
+      "key": "contrat.resilitation.planifiee",
+      "description": "Un contrat est résilié ou arrive à échéance",
+      "trigger": "date de résiliation + 90 jours",
+      "format": "webhook"
+    },
+    {
+      "key": "entreprise.sans_fiduciaire",
+      "description": "Client entreprise WIN WIN sans fiduciaire identifiée",
+      "trigger": "flag dans fiche client",
+      "format": "api"
+    },
+    {
+      "key": "client.nouveau",
+      "description": "Nouveau client signé — avec type (privé/entreprise)",
+      "trigger": "premier contrat actif",
+      "format": "webhook"
+    },
+    {
+      "key": "partenaire.garage.recommande",
+      "description": "Garage partenaire recommandé pour un sinistre véhicule",
+      "trigger": "mission déclenchée",
+      "format": "webhook"
+    },
+    {
+      "key": "client.bilan_decouverte.complete",
+      "description": "Un prospect a complété un Bilan Découverte",
+      "trigger": "formulaire soumis",
+      "format": "webhook"
+    }
+  ],
+  "data_needed": [
+    {
+      "key": "divorce.finalise",
+      "description": "Quand un utilisateur finalise un divorce sur TournePage → réviser ses polices",
+      "from": "provis",
+      "priority": "haute"
+    },
+    {
+      "key": "bail.signe",
+      "description": "Signature d'un bail sur immo.cool → proposer assurance ménage + RC",
+      "from": "immo-cool",
+      "priority": "haute"
+    },
+    {
+      "key": "entreprise.employee_count",
+      "description": "Nombre d'employés pour tarification PG maladie / LAA",
+      "from": "swissrh",
+      "priority": "moyenne"
+    },
+    {
+      "key": "salaire_masse.avs",
+      "description": "Masse salariale AVS annuelle pour LAA/LAAC",
+      "from": "swissrh",
+      "priority": "haute"
+    },
+    {
+      "key": "conducteur.nouveau_vehicule",
+      "description": "Achat d'un véhicule détecté → proposer assurance auto",
+      "from": "jvais",
+      "priority": "moyenne"
+    }
+  ],
+  "events_emitted": [
+    "sinistre.vehicule.ouvert",
+    "sinistre.ouvert",
+    "client.divorce.detecte",
+    "client.demenagement.detecte",
+    "contrat.nouveau",
+    "partenaire.mission.declenchee"
+  ],
+  "events_consumed": [
+    "divorce.finalise",
+    "bail.signe",
+    "salaire_masse.avs",
+    "conducteur.actif"
+  ],
+  "revenue_model": "Commissions courtage (28 400 CHF/mois) + mandats de gestion (12 800) + conseil (4 200)",
+  "monthly_users": 169,
+  "monthly_revenue_chf": 45400,
+  "synergy_potential": "Hub central de l'écosystème NEO. Chaque événement de vie (divorce, déménagement, naissance d'entreprise) dans une autre app génère une opportunité commerciale WIN WIN. Réciproquement, chaque nouveau client WIN WIN est un prospect pour PEP's Digital, immo.cool, MATCHO, SwissRH.",
+  "partenaires_program": {
+    "status": "en_construction",
+    "categories": [
+      "garagistes",
+      "plombiers",
+      "électriciens",
+      "vitriers"
+    ],
+    "trigger": "sinistre.vehicule.ouvert → recommander garagiste partenaire"
+  }
+}
