@@ -1,0 +1,30 @@
+{
+  "id": "SYN-002",
+  "status": "proposed",
+  "proposed_by": "claude-synergy-engine",
+  "proposed_at": "2026-03-06T20:00:00Z",
+  "validated_by": null,
+  "title": "📊 SWISSRH masse salariale → WIN WIN appels d'offres LAA automatiques",
+  "description": "SWISSRH connaît en temps réel la masse salariale AVS de chaque entreprise cliente. C'est EXACTEMENT la donnée dont WIN WIN a besoin pour lancer des appels d'offres LAA/LAAC/PG. Aujourd'hui Olivier demande cette donnée manuellement à chaque client — avec SWISSRH, elle arrive automatiquement.",
+  "category": "data_sync",
+  "priority": "critique",
+  "effort_estimate": "3h de code",
+  "revenue_impact_chf": 15000,
+  "revenue_details": "Chaque appel d'offres LAA peut générer 2 000-10 000 CHF de primes annuelles. Si SWISSRH permet de déclencher automatiquement 5 appels d'offres supplémentaires par mois = 15 000 CHF/mois potentiel.",
+  "source_app": "swissrh",
+  "source_event": "salaire_masse.avs",
+  "target_app": "winwin-v2",
+  "target_action": "preparer_appel_offres_laa",
+  "flow": [
+    "1. SWISSRH: clôture de paie → masse AVS calculée pour entreprise X",
+    "2. SWISSRH émet: salaire_masse.avs {entreprise_id, masse_avs, nb_employes, noga_code}",
+    "3. WIN WIN reçoit → vérifie si entreprise X est client WIN WIN",
+    "4. Si oui ET si pas d'appel d'offres en cours → crée tâche 'Lancer AO LAA'",
+    "5. Olivier valide → appels d'offres partent automatiquement à Helsana/SWICA/AXA/GM",
+    "6. WIN WIN attache le rapport de la performance actuelle depuis la DB"
+  ],
+  "implementation": {
+    "swissrh": "POST /api/neo-hub/emit {event: 'salaire_masse.avs', payload: {masse_avs, nb_employes, noga_code}} après chaque clôture de paie",
+    "winwin-v2": "Endpoint POST /api/neo-hub/receive qui traite l'event et crée la tâche + pré-remplit le formulaire AO"
+  }
+}
