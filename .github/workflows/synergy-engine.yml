@@ -1,4 +1,4 @@
-name: 🧠 NEO Synergy Engine — Claude proposes synergies
+name: 🧠 NEO Synergy Engine
 
 on:
   push:
@@ -7,115 +7,71 @@ on:
   workflow_dispatch:
 
 jobs:
-  propose-synergies:
+  synergy:
     runs-on: ubuntu-latest
-    name: Analyse cross-app et proposition de synergies
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install SDK
         run: npm install @anthropic-ai/sdk
 
       - name: Run Synergy Engine
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          cat << 'SCRIPT' > engine.mjs
-          import fs from 'fs';
-          import path from 'path';
-          import Anthropic from '@anthropic-ai/sdk';
+        run: node -e "
+const fs = require('fs');
+const path = require('path');
+const Anthropic = require('@anthropic-ai/sdk');
+const client = new Anthropic();
 
-          const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const manifests = fs.readdirSync('./apps')
+  .filter(f => f.endsWith('.json'))
+  .map(f => JSON.parse(fs.readFileSync('./apps/' + f)));
 
-          // Lire tous les manifestes
-          const appsDir = './apps';
-          const manifests = fs.readdirSync(appsDir)
-            .filter(f => f.endsWith('.json'))
-            .map(f => JSON.parse(fs.readFileSync(path.join(appsDir, f))));
+const existing = fs.existsSync('./synergies/proposed')
+  ? fs.readdirSync('./synergies/proposed').map(f => f.replace('.json',''))
+  : [];
 
-          // Lire synergies déjà proposées
-          const proposedDir = './synergies/proposed';
-          const existingFiles = fs.existsSync(proposedDir) ? fs.readdirSync(proposedDir) : [];
-          const existingIds = existingFiles.map(f => f.replace('.json',''));
-          const nextNum = existingIds.length + 1;
-          const nextId = 'SYN-' + String(nextNum).padStart(3,'0');
+const nextId = 'SYN-' + String(existing.length + 1).padStart(3,'0');
+console.log('Apps:', manifests.length, '| Synergies existantes:', existing.length, '| Prochain:', nextId);
 
-          console.log(`📋 ${manifests.length} apps analysées | ${existingIds.length} synergies existantes | Prochain ID: ${nextId}`);
+client.messages.create({
+  model: 'claude-opus-4-6',
+  max_tokens: 3000,
+  messages: [{ role: 'user', content: 'Tu es le NEO Synergy Engine. Analyse ces manifestes d apps du Groupe NEO et propose 2 nouvelles synergies. Manifestes: ' + JSON.stringify(manifests) + '. Synergies existantes (ne pas reproduire): ' + existing.join(', ') + '. Reponds UNIQUEMENT avec un JSON array de synergies avec ces champs: id (commence a ' + nextId + '), status (proposed), proposed_by (claude-synergy-engine), proposed_at (timestamp ISO), validated_by (null), title (emoji + titre), description (2-3 phrases), category, priority (critique/haute/moyenne), effort_estimate, revenue_impact_chf (number), revenue_details, source_app, source_event, target_app, target_action, flow (array etapes). Pas de markdown, JSON brut uniquement.' }]
+}).then(resp => {
+  const text = resp.content[0].text;
+  console.log('Reponse Claude:', text.substring(0,200));
+  let synergies = [];
+  try {
+    const clean = text.replace(/\`\`\`json/g,'').replace(/\`\`\`/g,'').trim();
+    synergies = JSON.parse(clean);
+  } catch(e) {
+    const m = text.match(/\[[\s\S]*\]/);
+    if (m) try { synergies = JSON.parse(m[0]); } catch(e2) { console.error('Parse error:', e2.message); }
+  }
+  if (!fs.existsSync('./synergies/proposed')) fs.mkdirSync('./synergies/proposed', {recursive:true});
+  synergies.forEach((s,i) => {
+    if (!s.id) s.id = 'SYN-' + String(existing.length + 1 + i).padStart(3,'0');
+    const fp = './synergies/proposed/' + s.id + '.json';
+    if (!fs.existsSync(fp)) {
+      fs.writeFileSync(fp, JSON.stringify(s, null, 2));
+      console.log('Cree:', s.id, '-', s.title);
+    }
+  });
+}).catch(e => { console.error('Erreur:', e.message); process.exit(1); });
+"
 
-          const prompt = `Tu es le NEO Synergy Engine pour le Groupe NEO d'Olivier Neukomm (Suisse).
-
-MANIFESTES APPS:
-${JSON.stringify(manifests, null, 2)}
-
-SYNERGIES EXISTANTES (ne pas reproduire): ${existingIds.join(', ')}
-
-Propose 2 NOUVELLES synergies concrètes et chiffrées. Réponds UNIQUEMENT avec un JSON array:
-[{
-  "id": "${nextId}",
-  "status": "proposed",
-  "proposed_by": "claude-synergy-engine",
-  "proposed_at": "${new Date().toISOString()}",
-  "validated_by": null,
-  "title": "emoji + titre court",
-  "description": "2-3 phrases claires",
-  "category": "automation|data_sync|cross_sell|life_event_trigger",
-  "priority": "critique|haute|moyenne",
-  "effort_estimate": "Xh de code",
-  "revenue_impact_chf": 0,
-  "revenue_details": "calcul détaillé",
-  "source_app": "app-id",
-  "source_event": "event.name",
-  "target_app": "app-id",
-  "target_action": "action",
-  "flow": ["étape 1", "étape 2"]
-}]`;
-
-          const response = await client.messages.create({
-            model: 'claude-opus-4-6',
-            max_tokens: 3000,
-            messages: [{ role: 'user', content: prompt }]
-          });
-
-          const text = response.content[0].text;
-          console.log('🧠 Réponse Claude reçue');
-          
-          const clean = text.replace(/```json
-?/g,'').replace(/```
-?/g,'').trim();
-          let synergies = [];
-          try { synergies = JSON.parse(clean); }
-          catch(e) {
-            const match = text.match(/\[[\s\S]*\]/);
-            if (match) synergies = JSON.parse(match[0]);
-          }
-
-          if (!fs.existsSync(proposedDir)) fs.mkdirSync(proposedDir, {recursive:true});
-          
-          for (let i = 0; i < synergies.length; i++) {
-            const syn = synergies[i];
-            if (!syn.id) syn.id = 'SYN-' + String(nextNum + i).padStart(3,'0');
-            const filePath = path.join(proposedDir, syn.id + '.json');
-            if (!fs.existsSync(filePath)) {
-              fs.writeFileSync(filePath, JSON.stringify(syn, null, 2));
-              console.log('✅ Synergie créée:', syn.id, '—', syn.title);
-            }
-          }
-          SCRIPT
-          node engine.mjs
-
-      - name: Commit proposed synergies
+      - name: Commit
         run: |
           git config user.email "synergy-engine@groupeneo.ch"
-          git config user.name "NEO Synergy Engine 🧠"
+          git config user.name "NEO Synergy Engine"
           git add synergies/proposed/
-          git diff --staged --quiet || git commit -m "🧠 feat(synergies): nouvelles synergies proposées par Claude [auto]"
+          git diff --staged --quiet || git commit -m "feat(synergies): nouvelles synergies Claude [auto]"
           git push
