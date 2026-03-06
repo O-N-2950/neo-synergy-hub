@@ -1,0 +1,64 @@
+{
+  "id": "immo-cool",
+  "name": "immo.cool",
+  "entity": "peps_swiss",
+  "domain": "immocool.ch",
+  "repo": "O-N-2950/immo-cool",
+  "description": "Plateforme immobilière 100% gratuite pour les locataires suisses. Annonces, candidatures, scoring locataire, signature bail.",
+  "version": "1.0",
+  "updated_at": "2026-03-06",
+  "stack": "JavaScript + Railway",
+  "status": "production",
+  "data_exposed": [
+    {
+      "key": "bail.signe",
+      "description": "Bail signé entre locataire et propriétaire",
+      "trigger": "confirmation des deux parties",
+      "format": "webhook",
+      "payload": {
+        "locataire_email": "string",
+        "adresse": "string",
+        "canton": "string",
+        "date_entree": "date",
+        "loyer_mensuel": "number"
+      }
+    },
+    {
+      "key": "candidature.acceptee",
+      "description": "Candidature locataire acceptée par propriétaire",
+      "trigger": "statut candidature = acceptée",
+      "format": "webhook"
+    },
+    {
+      "key": "locataire.recherche_active",
+      "description": "Locataire actif sur la plateforme avec critères de recherche",
+      "trigger": "recherche active < 7j",
+      "format": "api"
+    }
+  ],
+  "data_needed": [
+    {
+      "key": "client.demenagement.detecte",
+      "description": "Client WIN WIN qui déménage → rediriger vers immo.cool",
+      "from": "winwin-v2",
+      "priority": "haute"
+    },
+    {
+      "key": "credits.offerts.bail",
+      "description": "Offrir 50 crédits PEP's au locataire lors de la signature",
+      "from": "peps-digital",
+      "priority": "moyenne"
+    }
+  ],
+  "events_emitted": [
+    "bail.signe",
+    "candidature.acceptee"
+  ],
+  "events_consumed": [
+    "credits.emis"
+  ],
+  "revenue_model": "Annonces premium propriétaires + services assurance intégrés",
+  "monthly_users": 89,
+  "monthly_revenue_chf": 12450,
+  "synergy_potential": "Chaque bail signé est une opportunité WIN WIN (assurance ménage + RC privée obligatoire). Le locataire vient de signer = besoin urgent = moment parfait. Tunnel: bail signé → popup WIN WIN → offre ménage en 3 clics."
+}
