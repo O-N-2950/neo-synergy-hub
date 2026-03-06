@@ -1,0 +1,26 @@
+{
+  "id": "SYN-003",
+  "status": "proposed",
+  "proposed_by": "claude-synergy-engine",
+  "proposed_at": "2026-03-06T20:00:00Z",
+  "title": "🏠 immo.cool bail signé → WIN WIN assurance ménage en 3 clics",
+  "description": "Dès qu'un bail est signé sur immo.cool, WIN WIN propose automatiquement au nouveau locataire une assurance ménage + RC privée. Le locataire est dans le moment parfait (besoin immédiat, motivation maximale). Le processus est préfillé avec l'adresse du bail.",
+  "category": "cross_sell",
+  "priority": "haute",
+  "effort_estimate": "2h de code",
+  "revenue_impact_chf": 3600,
+  "revenue_details": "Estimation: 8 baux/mois × 30% conversion × prime ménage 150 CHF/an = 3 600 CHF de primes annuelles supplémentaires. Croissant avec le volume immo.cool.",
+  "source_app": "immo-cool",
+  "source_event": "bail.signe",
+  "target_app": "winwin-v2",
+  "target_action": "proposer_offre_menage_rc",
+  "flow": [
+    "1. immo.cool: bail signé entre locataire et propriétaire",
+    "2. immo.cool émet bail.signe {locataire_email, adresse_complete, canton, date_entree, loyer}",
+    "3. WIN WIN reçoit → vérifie si email déjà client WIN WIN",
+    "4a. Si client: notif 'Vous avez déménagé — mettre à jour votre assurance ménage'",
+    "4b. Si non-client: email personnalisé 'Félicitations pour votre nouveau logement — offre ménage en 3 clics'",
+    "5. Lien direct vers formulaire préfillé (adresse, date d'entrée)",
+    "6. Souscription en ligne ou RDV Bilan Découverte"
+  ]
+}
