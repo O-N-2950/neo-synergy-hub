@@ -1,0 +1,26 @@
+{
+  "id": "SYN-004",
+  "status": "proposed",
+  "proposed_by": "claude-synergy-engine",
+  "proposed_at": "2026-03-06T20:00:00Z",
+  "_note": "Synergie anticipée — se précisera quand le manifeste PROVIS sera complété",
+  "title": "⚖️ PROVIS dossier finalisé → WIN WIN révision polices assurances",
+  "description": "Dès qu'un dossier est finalisé dans PROVIS, WIN WIN est notifié automatiquement pour contacter le client et réviser l'ensemble de ses polices d'assurances qui changent après une telle procédure (ménage, RC, prévoyance, véhicule, etc.).",
+  "category": "life_event_trigger",
+  "priority": "critique",
+  "effort_estimate": "2h de code",
+  "revenue_impact_chf": 5400,
+  "revenue_details": "Chaque procédure implique une révision complète des polices. Estimation: 12 dossiers/mois × 30% conversion × panier moyen 1 500 CHF = 5 400 CHF/mois.",
+  "source_app": "provis",
+  "source_event": "dossier.finalise",
+  "target_app": "winwin-v2",
+  "target_action": "declencer_revision_polices",
+  "flow": [
+    "1. PROVIS: dossier finalisé pour client X",
+    "2. PROVIS émet dossier.finalise {client_email, type_dossier, canton}",
+    "3. WIN WIN reçoit → crée tâche prioritaire 'Révision polices suite PROVIS'",
+    "4. Wini IA prépare automatiquement la liste des contrats à réviser pour ce client",
+    "5. Email personnalisé au client: 'Suite à votre dossier, votre courtier WIN WIN vous accompagne pour adapter vos assurances'",
+    "6. Lien vers Bilan Découverte ou directement vers portail client"
+  ]
+}
